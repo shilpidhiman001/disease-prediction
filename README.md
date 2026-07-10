@@ -2,6 +2,10 @@
 
 A full-stack Flask application for AI-powered disease prediction using a pre-trained RandomForest model. Deploy-ready for [Render](https://render.com/).
 
+
+## Live Demo:
+https://disease-prediction-fnvu.onrender.com
+
 ## Features
 
 - **Beautiful, responsive UI** - Modern medical-themed interface
