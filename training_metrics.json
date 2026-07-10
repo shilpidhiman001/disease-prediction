@@ -1,0 +1,24 @@
+{
+  "test_accuracy": 0.9038,
+  "weighted_f1": 0.903,
+  "cv_mean_accuracy": 0.9103,
+  "n_train": 3200,
+  "n_test": 800,
+  "classes": [
+    "Allergies",
+    "Asthma",
+    "COVID-19",
+    "Common Cold",
+    "Dengue",
+    "Diabetes",
+    "Flu",
+    "Food Poisoning",
+    "Hypertension",
+    "Malaria",
+    "Migraine",
+    "Pneumonia",
+    "Tuberculosis",
+    "Typhoid",
+    "Viral Fever"
+  ]
+}

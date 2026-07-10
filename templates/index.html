@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitalSense AI - Disease Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2"/>
+                    <path d="M16 8v16M8 16h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <h1>VitalSense <span>AI</span></h1>
+            </div>
+            <p class="subtitle">Intelligent Disease Prediction System</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Input Form -->
+            <section class="form-section">
+                <div class="section-header">
+                    <h2>Patient Information</h2>
+                    <p class="hint">Enter vitals and check all applicable symptoms</p>
+                </div>
+
+                <form id="predictionForm">
+                    <!-- Vitals -->
+                    <div class="vitals-grid">
+                        <div class="form-group">
+                            <label for="age">Age <span class="required">*</span></label>
+                            <input type="number" id="age" name="age" min="1" max="120" required placeholder="e.g. 34">
+                        </div>
+                        <div class="form-group">
+                            <label for="gender">Gender <span class="required">*</span></label>
+                            <select id="gender" name="gender" required>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="weight_kg">Weight (kg) <span class="required">*</span></label>
+                            <input type="number" id="weight_kg" name="weight_kg" min="1" max="300" step="0.1" required placeholder="e.g. 72.5">
+                        </div>
+                        <div class="form-group">
+                            <label for="height_cm">Height (cm) <span class="required">*</span></label>
+                            <input type="number" id="height_cm" name="height_cm" min="50" max="250" step="0.1" required placeholder="e.g. 175.2">
+                        </div>
+                        <div class="form-group">
+                            <label for="body_temp_f">Body Temp (°F) <span class="required">*</span></label>
+                            <input type="number" id="body_temp_f" name="body_temp_f" min="90" max="110" step="0.1" required placeholder="e.g. 98.6">
+                        </div>
+                        <div class="form-group">
+                            <label for="bp_systolic">BP Systolic <span class="required">*</span></label>
+                            <input type="number" id="bp_systolic" name="bp_systolic" min="50" max="250" required placeholder="e.g. 120">
+                        </div>
+                        <div class="form-group">
+                            <label for="bp_diastolic">BP Diastolic <span class="required">*</span></label>
+                            <input type="number" id="bp_diastolic" name="bp_diastolic" min="30" max="150" required placeholder="e.g. 80">
+                        </div>
+                        <div class="form-group">
+                            <label for="heart_rate">Heart Rate (bpm) <span class="required">*</span></label>
+                            <input type="number" id="heart_rate" name="heart_rate" min="30" max="200" required placeholder="e.g. 75">
+                        </div>
+                        <div class="form-group">
+                            <label for="blood_sugar">Blood Sugar (mg/dL) <span class="required">*</span></label>
+                            <input type="number" id="blood_sugar" name="blood_sugar" min="50" max="500" required placeholder="e.g. 100">
+                        </div>
+                        <div class="form-group">
+                            <label for="oxygen_level">Oxygen Level (%) <span class="required">*</span></label>
+                            <input type="number" id="oxygen_level" name="oxygen_level" min="70" max="100" required placeholder="e.g. 98">
+                        </div>
+                    </div>
+
+                    <!-- Symptoms -->
+                    <div class="symptoms-section">
+                        <h3>Symptoms</h3>
+                        <p class="hint">Check all symptoms the patient is experiencing</p>
+                        <div class="symptoms-grid">
+                            {% for symptom in symptoms %}
+                            <label class="symptom-checkbox">
+                                <input type="checkbox" name="{{ symptom }}" id="{{ symptom }}">
+                                <span class="checkmark"></span>
+                                <span class="symptom-name">{{ symptom.replace('_', ' ').title() }}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Submit -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary" id="predictBtn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 11l3 3L22 4"/>
+                                <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+                            </svg>
+                            Analyze & Predict
+                        </button>
+                        <button type="button" class="btn-secondary" id="clearBtn">Clear Form</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Results Section (hidden by default) -->
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <div class="section-header">
+                    <h2>Prediction Result</h2>
+                </div>
+
+                <div class="result-card" id="resultCard">
+                    <div class="prediction-main">
+                        <div class="confidence-ring">
+                            <svg viewBox="0 0 120 120">
+                                <circle class="bg" cx="60" cy="60" r="54"/>
+                                <circle class="progress" cx="60" cy="60" r="54" id="confidenceCircle"/>
+                            </svg>
+                            <div class="confidence-text">
+                                <span class="percentage" id="confidenceValue">--</span>
+                                <span class="label">Confidence</span>
+                            </div>
+                        </div>
+                        <div class="prediction-details">
+                            <span class="prediction-label">Most Likely Condition</span>
+                            <h3 class="disease-name" id="diseaseName">--</h3>
+                            <p class="disease-description" id="diseaseDescription">--</p>
+                        </div>
+                    </div>
+
+                    <div class="advice-box" id="adviceBox">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 16v-4M12 8h.01"/>
+                        </svg>
+                        <p id="adviceText"></p>
+                    </div>
+
+                    <div class="top3-section">
+                        <h4>Other Possibilities</h4>
+                        <div class="top3-list" id="top3List"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Disclaimer -->
+            <div class="disclaimer">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+                <p><strong>Disclaimer:</strong> This tool is for educational and demonstration purposes only. It uses a machine learning model trained on synthetic data and is not a certified diagnostic tool. Always consult a qualified healthcare professional for medical advice, diagnosis, or treatment.</p>
+            </div>
+        </main>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="spinner"></div>
+            <p>Analyzing patient data...</p>
+        </div>
+
+        <!-- Toast Notification -->
+        <div class="toast" id="toast"></div>
+
+        <footer>
+            <p>VitalSense AI &copy; 2024 &middot; Powered by Machine Learning</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
