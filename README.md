@@ -6,6 +6,12 @@ A full-stack Flask application for AI-powered disease prediction using a pre-tra
 ## Live Demo:
 https://disease-prediction-fnvu.onrender.com
 
+
+## VitalSense_AI_Poster
+
+<img width="3509" height="4075" alt="VitalSense_AI_Poster" src="https://github.com/user-attachments/assets/f4989d1b-f6fc-4aac-9550-288e8c7da91e" />
+
+
 ## Features
 
 - **Beautiful, responsive UI** - Modern medical-themed interface
